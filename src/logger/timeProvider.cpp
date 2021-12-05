@@ -8,6 +8,7 @@
 #include <dci/logger/timeProvider.hpp>
 #include <utility>
 #include <array>
+#include <ctime>
 
 namespace dci::logger
 {
@@ -75,7 +76,13 @@ namespace dci::logger
         else
         {
             std::time_t t = secs.count();
-            end = strftime(g_buf, sizeof(g_buf), "%F %T", std::localtime(&t));
+            struct tm tm;
+#ifdef _WIN32
+            localtime_s(&tm, &t);
+#else
+            localtime_r(&t, &tm);
+#endif
+            end = std::strftime(g_buf, sizeof(g_buf), "%Y-%m-%d %H:%M:%S", &tm);
             g_lastState._strToSecs = std::string_view{g_buf, end};
         }
 

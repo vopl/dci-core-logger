@@ -22,7 +22,7 @@ namespace dci::logger
 
     public:
         Stream(std::ostream& out)
-            : _out(out)
+            : _out{out}
         {
             std::string_view time = timeProvidedAsString();
             if(!time.empty())
