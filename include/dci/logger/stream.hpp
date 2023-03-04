@@ -9,7 +9,7 @@
 
 #include <sstream>
 #include <iostream>
-#include <iomanip>
+#include <string_view>
 #include <system_error>
 #include "timeProvider.hpp"
 
@@ -21,20 +21,34 @@ namespace dci::logger
         std::stringstream _buf;
 
     public:
-        Stream(std::ostream& out)
+        Stream(std::ostream& out, std::string_view level, std::string_view identity)
             : _out{out}
         {
-            std::string_view time = timeProvidedAsString();
-            if(!time.empty())
+            auto putOne = [&](bool needSpace, std::string_view str) -> bool
             {
-                _buf<<time<<' ';
-            }
+                if(str.empty())
+                {
+                    return false;
+                }
+
+                if(needSpace)
+                    _buf << ' ';
+                _buf << str;
+                return true;
+            };
+
+            bool needSpace = false;
+            needSpace |= putOne(needSpace, timeProvidedAsString());
+            needSpace |= putOne(needSpace, level);
+            needSpace |= putOne(needSpace, identity);
+            _buf << ": ";
         }
 
         ~Stream()
         {
-            _buf<<std::endl;
-            _out<<_buf.str();
+            _buf << '\n';
+            std::string_view str{_buf.view()};
+            _out.write(str.data(), str.size());
             _out.flush();
         }
 
@@ -47,12 +61,6 @@ namespace dci::logger
         Stream& operator<<(const std::error_condition& ec)
         {
             _buf << ec.message() << " (" << ec.category().name() << '.' << ec.value() << ')';
-            return *this;
-        }
-
-        Stream& operator<<( std::ostream&(*v)(std::ostream&) )
-        {
-            _buf << v;
             return *this;
         }
 

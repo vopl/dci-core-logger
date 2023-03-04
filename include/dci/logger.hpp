@@ -12,17 +12,17 @@
 
 #if !defined(dciLoggerIdentity)
 #   if defined(dciModuleName)
-#       define dciLoggerIdentity " " dciModuleName
+#       define dciLoggerIdentity dciModuleName
 #   elif defined(dciUnitName)
-#       define dciLoggerIdentity " " dciUnitName
+#       define dciLoggerIdentity dciUnitName
 #   else
 #       define dciLoggerIdentity ""
 #   endif
 #endif
 
-#   define LOGF(...) dci::logger::Stream{std::cout} << "FTL" dciLoggerIdentity ": " << __VA_ARGS__
-#   define LOGE(...) dci::logger::Stream{std::cout} << "ERR" dciLoggerIdentity ": " << __VA_ARGS__
-#   define LOGW(...) dci::logger::Stream{std::cout} << "WRN" dciLoggerIdentity ": " << __VA_ARGS__
-#   define LOGI(...) dci::logger::Stream{std::cout} << "INF" dciLoggerIdentity ": " << __VA_ARGS__
-#   define LOGD(...) dci::logger::Stream{std::cout} << "DBG" dciLoggerIdentity ": " << __VA_ARGS__
-#   define LOGT(...) dci::logger::Stream{std::cout} << "TRC" dciLoggerIdentity ": " << __VA_ARGS__
+#   define LOGF(...) dci::logger::Stream{std::cout, "FTL", dciLoggerIdentity} << __VA_ARGS__
+#   define LOGE(...) dci::logger::Stream{std::cout, "ERR", dciLoggerIdentity} << __VA_ARGS__
+#   define LOGW(...) dci::logger::Stream{std::cout, "WRN", dciLoggerIdentity} << __VA_ARGS__
+#   define LOGI(...) dci::logger::Stream{std::cout, "INF", dciLoggerIdentity} << __VA_ARGS__
+#   define LOGD(...) dci::logger::Stream{std::cout, "DBG", dciLoggerIdentity} << __VA_ARGS__
+#   define LOGT(...) dci::logger::Stream{std::cout, "TRC", dciLoggerIdentity} << __VA_ARGS__
